@@ -1,7 +1,6 @@
 package com.example.stockscan.Fragments;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -20,7 +19,6 @@ import com.example.stockscan.Adapters.InventoryAdapter;
 import com.example.stockscan.MasterActivity;
 import com.example.stockscan.Models.Produce;
 import com.example.stockscan.R;
-import com.example.stockscan.ScanScreen;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
