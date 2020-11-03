@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "789133099900",
+    "firebase_url": "https://stockscan-2d0f2.firebaseio.com",
+    "project_id": "stockscan-2d0f2",
+    "storage_bucket": "stockscan-2d0f2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:789133099900:android:3df2d29a293880db6c1af9",
+        "android_client_info": {
+          "package_name": "com.example.stockscan"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "789133099900-q95b7j9962s7k7qt1ltrp9srls9agu4m.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.stockscan",
+            "certificate_hash": "34431769a159568bdda1930baaba7117a98ebf04"
+          }
+        },
+        {
+          "client_id": "789133099900-6ha4nr87j2r0dkri9feflbkcc0qfaosk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC9weLkTldirX_So7A_18vh-foLAH-G_2Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "789133099900-6ha4nr87j2r0dkri9feflbkcc0qfaosk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

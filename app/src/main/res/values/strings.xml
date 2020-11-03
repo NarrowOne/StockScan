@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">StockScan</string>
+    <string name="capture">Capture Image</string>
+    <string name="preview_area">Camera Preview</string>
+</resources>
