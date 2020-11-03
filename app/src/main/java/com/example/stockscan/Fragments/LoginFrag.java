@@ -22,7 +22,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class LoginFrag extends Fragment {
 
-    private final String TAG = "LoginActivity";
+    private final String TAG = "LoginFrag";
 
     private Context context;
     private FirebaseAuth mAuth;
