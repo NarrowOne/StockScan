@@ -3,17 +3,17 @@ package com.example.stockscan.Models;
 public class Produce {
     private String iD;
     private String name;
-    private String prodID;
+    private String prodCode;
     private String batch;
     private double weight;
     private String expiryDate;
     private String[] tags;
 
-    public Produce(String iD, String name, String prodID, String batch,
+    public Produce(String iD, String name, String prodCode, String batch,
                    double weight, String expiryDate, String[] tags) {
         this.iD = iD;
         this.name = name;
-        this.prodID = prodID;
+        this.prodCode = prodCode;
         this.batch = batch;
         this.weight = weight;
         this.expiryDate = expiryDate;
@@ -36,12 +36,12 @@ public class Produce {
         this.name = name;
     }
 
-    public String getProdID() {
-        return prodID;
+    public String getProdCode() {
+        return prodCode;
     }
 
-    public void setProdID(String prodID) {
-        this.prodID = prodID;
+    public void setProdCode(String prodCode) {
+        this.prodCode = prodCode;
     }
 
     public String getBatch() {

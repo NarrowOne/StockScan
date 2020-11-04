@@ -29,7 +29,7 @@ public class InventoryFrag extends Fragment {
 
     private static String TAG = "InventoryFrag";
 
-    private Context context;
+    private Context parent;
 
     private RecyclerView invRecycler;
     private InventoryAdapter invAdapter;
@@ -62,11 +62,11 @@ public class InventoryFrag extends Fragment {
         invRecycler = view.findViewById(R.id.inventoryRecycler);
         invRecycler.setHasFixedSize(true);
 
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(context);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(parent);
         invRecycler.setLayoutManager(layoutManager);
 
 
-        invAdapter = new InventoryAdapter();
+        invAdapter = new InventoryAdapter(parent);
         getStocklist();
     }
 
@@ -112,6 +112,6 @@ public class InventoryFrag extends Fragment {
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        this.context = context;
+        this.parent = context;
     }
 }

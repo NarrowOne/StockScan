@@ -11,7 +11,9 @@ import android.widget.FrameLayout;
 
 import com.example.stockscan.Fragments.InventoryFrag;
 import com.example.stockscan.Fragments.LoginFrag;
+import com.example.stockscan.Fragments.ProduceDetails;
 import com.example.stockscan.Fragments.ScanFrag;
+import com.example.stockscan.Models.Produce;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
@@ -28,7 +30,9 @@ public class MasterActivity extends AppCompatActivity {
     private HashMap<String, Fragment> frags = new HashMap<>();
     private final List<String> previousFrags = new ArrayList<>();
 
-    public Boolean popped = false;
+    private Produce selectedProduce;
+
+    private Boolean popped = false;
 
     private FirebaseUser currentUser;
 
@@ -69,13 +73,16 @@ public class MasterActivity extends AppCompatActivity {
         LoginFrag loginFrag = LoginFrag.newInstance();
         InventoryFrag inventoryFrag = InventoryFrag.newInstance();
         ScanFrag scanFrag = ScanFrag.newInstance();
+        ProduceDetails produceDetails = ProduceDetails.newInstance();
 
-        frags.put("login",      loginFrag);
-        frags.put("inventory",  inventoryFrag);
-        frags.put("scan",       scanFrag);
+        frags.put("login",              loginFrag);
+        frags.put("inventory",          inventoryFrag);
+        frags.put("scan",               scanFrag);
+        frags.put("prod_details",       produceDetails);
 
         //Fragments that should not be revisited from back navigation
         badFrags.add("login");
+
     }
 
     public void changeFrag(String fragName){
@@ -88,5 +95,17 @@ public class MasterActivity extends AppCompatActivity {
             badFrag = badFrags.contains(currentFrag);
             previousFrags.add(currentFrag);
         }
+    }
+
+    public Boolean isPopped() {
+        return popped;
+    }
+
+    public Produce getSelectedProduce() {
+        return selectedProduce;
+    }
+
+    public void setSelectedProduce(Produce selectedProduce) {
+        this.selectedProduce = selectedProduce;
     }
 }

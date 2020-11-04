@@ -1,23 +1,27 @@
 package com.example.stockscan.Adapters;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.example.stockscan.MasterActivity;
 import com.example.stockscan.Models.Produce;
 import com.example.stockscan.R;
 
 import java.util.List;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.ViewHolder> {
-    List<Produce> stockList;
+    private List<Produce> stockList;
+    private Context parent;
 
-    public InventoryAdapter(){
-
+    public InventoryAdapter(Context parent){
+        this.parent = parent;
     }
 
     @NonNull
@@ -34,6 +38,11 @@ public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.View
         String prodName = stockList.get(position).getName();
 
         holder.setItemName(prodName);
+
+        holder.getLayout().setOnClickListener(l->{
+            ((MasterActivity)parent).changeFrag("prod_details");
+            ((MasterActivity)parent).setSelectedProduce(stockList.get(position));
+        });
     }
 
     @Override
@@ -46,14 +55,17 @@ public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.View
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
-        public TextView itemName;
+        private final ConstraintLayout layout;
+        private final TextView itemName;
 
         public ViewHolder(View v){
             super(v);
+            layout = v.findViewById(R.id.layout);
             itemName = v.findViewById(R.id.nameDisplay);
         }
         void setItemName(String name){
             itemName.setText(name);
         }
+        ConstraintLayout getLayout(){return layout;}
     }
 }
