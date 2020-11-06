@@ -9,6 +9,10 @@ public class Produce {
     private String expiryDate;
     private String[] tags;
 
+    public Produce(){
+
+    }
+
     public Produce(String iD, String name, String prodCode, String batch,
                    double weight, String expiryDate, String[] tags) {
         this.iD = iD;
