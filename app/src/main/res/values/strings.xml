@@ -5,7 +5,8 @@
     <string name="produce_name_placeholder">Produce:</string>
     <string name="product_code">Product Code:</string>
     <string name="product_batch">Batch Code:</string>
-    <string name="product_weight">Weight:</string>
+    <string name="product_weight">Weight (g):</string>
     <string name="product_expiry_date">Expiry Date:</string>
     <string name="produce_count">Count:</string>
+    <string name="cancel_btn">Cancel</string>
 </resources>
