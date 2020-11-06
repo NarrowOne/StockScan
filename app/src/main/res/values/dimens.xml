@@ -2,4 +2,5 @@
 <resources>
     <dimen name="text_h3">20sp</dimen>
     <dimen name="text_h1">30sp</dimen>
+    <dimen name="popup_text">18sp</dimen>
 </resources>
