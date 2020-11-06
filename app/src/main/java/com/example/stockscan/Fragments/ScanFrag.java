@@ -12,6 +12,7 @@ import androidx.camera.core.ImageAnalysis;
 import androidx.camera.core.Preview;
 import androidx.camera.lifecycle.ProcessCameraProvider;
 import androidx.camera.view.PreviewView;
+import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -31,13 +32,10 @@ import com.example.stockscan.R;
 import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.text.TextRecognizer;
 import com.google.common.util.concurrent.ListenableFuture;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -57,8 +55,6 @@ public class ScanFrag extends Fragment {
     private Context context;
 
     private PreviewView previewView;
-    private TextView nameDisplay, idDisplay, weightDisplay,
-                        batchDisplay, expDisplay;
 
     @Nullable private ProcessCameraProvider cameraProvider;
     @Nullable private ImageAnalysis analysisUseCase;
@@ -88,14 +84,15 @@ public class ScanFrag extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         previewView = view.findViewById(R.id.camera);
-
-        nameDisplay = view.findViewById(R.id.nameDisplay);
-        idDisplay = view.findViewById(R.id.idDisplay);
-        weightDisplay = view.findViewById(R.id.weightDisplay);
-        batchDisplay = view.findViewById(R.id.batchDisplay);
-        expDisplay = view.findViewById(R.id.expDisplay);
         ImageView scanProd = view.findViewById(R.id.scanProd);
+        CardView popup = view.findViewById(R.id.popup);
         Button saveProd = view.findViewById(R.id.saveProd);
+        Button cancel = view.findViewById(R.id.cancelScan);
+        TextView prodName = view.findViewById(R.id.prodName);
+        TextView prodCode = view.findViewById(R.id.prodCode);
+        TextView prodBatch = view.findViewById(R.id.prodBatch);
+        TextView prodWeight = view.findViewById(R.id.prodWeight);
+        TextView prodExp = view.findViewById(R.id.prodExpiry);
 
         if (!allPermissionsGranted())
             getRuntimePermissions();
@@ -115,13 +112,17 @@ public class ScanFrag extends Fragment {
 
         startCamera();
 
-        scanProd.setOnClickListener(l ->{
-            if(processor != null)
-                processor.requestAnalysis();
+        popup.setOnClickListener(l-> popup.setVisibility(View.GONE));
+        saveProd.setOnClickListener(l ->{
+//          saveScannedProduct();
+            popup.setVisibility(View.GONE);
         });
 
-        saveProd.setOnClickListener(l ->{
-            saveScannedProduct();
+        scanProd.setOnClickListener(l ->{
+            processor.requestAnalysis();
+            if(popup.getVisibility() == View.VISIBLE)
+                Toast.makeText(context, "Popup already visible", Toast.LENGTH_SHORT).show();
+            popup.setVisibility(View.VISIBLE);
         });
     }
 
@@ -206,31 +207,31 @@ public class ScanFrag extends Fragment {
         }
     }
 
-    private void saveScannedProduct(){
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-        double weight = Double.parseDouble(weightDisplay.getText().toString()) *1000;
-
-        Map<String, Object> scannedDetails = new HashMap<>();
-        scannedDetails.put("Name", nameDisplay.getText().toString());
-        scannedDetails.put("Product Code", idDisplay.getText().toString());
-        scannedDetails.put("Weight", String.format("%.0f", weight));
-        scannedDetails.put("Batch", batchDisplay.getText().toString());
-        scannedDetails.put("Expiry", expDisplay.getText().toString());
-        scannedDetails.put("Tags", "Meat, Pork");
-
-        db.collection("Users")
-                .document("Test")
-                .collection("Stock")
-                .add(scannedDetails)
-                .addOnCompleteListener(task -> {
-                    if(task.isSuccessful()){
-                        Toast.makeText(context, "Product Recorded", Toast.LENGTH_SHORT).show();
-                    }else{
-                        Log.e(TAG, "Error recording product", task.getException());
-                    }
-                });
-    }
+//    private void saveScannedProduct(){
+//        FirebaseFirestore db = FirebaseFirestore.getInstance();
+//
+//        double weight = Double.parseDouble(weightDisplay.getText().toString()) *1000;
+//
+//        Map<String, Object> scannedDetails = new HashMap<>();
+//        scannedDetails.put("Name", nameDisplay.getText().toString());
+//        scannedDetails.put("Product Code", idDisplay.getText().toString());
+//        scannedDetails.put("Weight", String.format("%.0f", weight));
+//        scannedDetails.put("Batch", batchDisplay.getText().toString());
+//        scannedDetails.put("Expiry", expDisplay.getText().toString());
+//        scannedDetails.put("Tags", "Meat, Pork");
+//
+//        db.collection("Users")
+//                .document("Test")
+//                .collection("Stock")
+//                .add(scannedDetails)
+//                .addOnCompleteListener(task -> {
+//                    if(task.isSuccessful()){
+//                        Toast.makeText(context, "Product Recorded", Toast.LENGTH_SHORT).show();
+//                    }else{
+//                        Log.e(TAG, "Error recording product", task.getException());
+//                    }
+//                });
+//    }
 
     @Override
     public void onAttach(@NonNull Context context) {
