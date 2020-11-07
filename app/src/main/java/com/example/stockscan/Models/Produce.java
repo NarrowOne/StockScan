@@ -1,5 +1,8 @@
 package com.example.stockscan.Models;
 
+
+import com.google.mlkit.vision.text.Text;
+
 public class Produce {
     private String iD;
     private String name;
@@ -74,5 +77,19 @@ public class Produce {
 
     public String[] getTags() {
         return tags;
+    }
+
+    public static class Builder{
+        private Text text;
+
+        public Builder(Text text){
+            this.text = text;
+        }
+
+        public Produce build(){
+
+
+            return new Produce();
+        }
     }
 }
