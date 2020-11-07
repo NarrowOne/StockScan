@@ -1,11 +1,10 @@
 package com.example.stockscan.Analyzers;
 
 import android.content.Context;
-import android.graphics.Point;
 import android.util.Log;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
+import com.example.stockscan.Adapters.ScannedProductAdapter;
+import com.example.stockscan.Models.Produce;
 import com.google.android.gms.tasks.Task;
 import com.google.mlkit.vision.common.InputImage;
 import com.google.mlkit.vision.text.Text;
@@ -22,6 +21,7 @@ public class TextProcessor extends ImageProcessorIMPL<Text> {
     protected static final String MANUAL_TESTING_LOG = "LogTagForTest";
 
     private final TextRecognizer textRecognizer;
+    private final ScannedProductAdapter adapter = new ScannedProductAdapter();
 
     public TextProcessor(Context context) {
         super(context);
@@ -32,8 +32,8 @@ public class TextProcessor extends ImageProcessorIMPL<Text> {
     protected Task detectInImage(InputImage image) {
         return textRecognizer.process(image).addOnSuccessListener(text -> {
             Log.d(TAG, "Analysis succeeded");
-
-            logExtrasForTesting(text);
+            adapter.getProduceFromText(text);
+//            logExtrasForTesting(text);
         }).addOnFailureListener(e -> {
             Log.d(TAG, "Analysis failed");
             e.printStackTrace();
@@ -48,11 +48,17 @@ public class TextProcessor extends ImageProcessorIMPL<Text> {
 
     @Override
     protected void onSuccess(@NonNull Text text) {
-        Log.d(TAG, "On-device Text detection successful");
         logExtrasForTesting(text);
     }
 
+    @Override
+    protected void onFailure(@NonNull Exception e) {
+        e.printStackTrace();
+    }
 
+    public Produce getScannedProduce(){
+        return adapter.getProduce();
+    }
 
     private static void logExtrasForTesting(Text text) {
         if (text != null) {
@@ -97,11 +103,6 @@ public class TextProcessor extends ImageProcessorIMPL<Text> {
                 }
             }
         }
-    }
-
-    @Override
-    protected void onFailure(@NonNull Exception e) {
-        e.printStackTrace();
     }
 
 
