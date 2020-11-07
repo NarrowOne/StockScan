@@ -21,7 +21,7 @@ public class TextProcessor extends ImageProcessorIMPL<Text> {
     protected static final String MANUAL_TESTING_LOG = "LogTagForTest";
 
     private final TextRecognizer textRecognizer;
-    private final ScannedProductAdapter adapter = new ScannedProductAdapter();
+    private Produce produce;
 
     public TextProcessor(Context context) {
         super(context);
@@ -32,8 +32,9 @@ public class TextProcessor extends ImageProcessorIMPL<Text> {
     protected Task detectInImage(InputImage image) {
         return textRecognizer.process(image).addOnSuccessListener(text -> {
             Log.d(TAG, "Analysis succeeded");
+            ScannedProductAdapter adapter = new ScannedProductAdapter();
             adapter.getProduceFromText(text);
-//            logExtrasForTesting(text);
+            produce = adapter.getProduce();
         }).addOnFailureListener(e -> {
             Log.d(TAG, "Analysis failed");
             e.printStackTrace();
@@ -57,7 +58,7 @@ public class TextProcessor extends ImageProcessorIMPL<Text> {
     }
 
     public Produce getScannedProduce(){
-        return adapter.getProduce();
+        return produce;
     }
 
     private static void logExtrasForTesting(Text text) {

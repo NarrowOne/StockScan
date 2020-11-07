@@ -11,7 +11,7 @@ import java.util.List;
 
 public class ScannedProductAdapter {
     private static final String TAG = "Product Adapter";
-    private Produce produce;
+    private final Produce produce;
 
     public ScannedProductAdapter() {
         produce = new Produce();
@@ -20,7 +20,11 @@ public class ScannedProductAdapter {
     public void getProduceFromText(Text text){
         if(text == null) return;
         if(!validateScan(text)) return;
-        produce = new Produce.Builder(text).build();
+        Produce newProduce = new Produce.Builder(text).build();
+        produce.setBatch(newProduce.getBatch());
+        produce.setExpiryDate(newProduce.getExpiryDate());
+        produce.setProdCode(newProduce.getProdCode());
+        produce.setWeight(newProduce.getWeight());
     }
 
 //    Check if produce is already recorded
