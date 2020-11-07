@@ -180,7 +180,7 @@
                         android:layout_marginStart="32dp"
                         android:layout_marginTop="16dp"
                         android:layout_marginBottom="8dp"
-                        android:text="Save"
+                        android:text="@string/save"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@+id/cancelScan"
                         app:layout_constraintStart_toStartOf="parent"
@@ -243,7 +243,8 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@android:drawable/ic_menu_camera" />
+                app:srcCompat="@android:drawable/ic_menu_camera"
+                android:contentDescription="@string/scanProd_description" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 
