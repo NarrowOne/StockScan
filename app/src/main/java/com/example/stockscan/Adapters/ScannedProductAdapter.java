@@ -1,5 +1,8 @@
 package com.example.stockscan.Adapters;
 
+import android.nfc.Tag;
+import android.util.Log;
+
 import com.example.stockscan.Models.Produce;
 import com.example.stockscan.Models.RecognizedProduce;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -58,12 +61,14 @@ public class ScannedProductAdapter {
                     Text.Element element = elements.get(k);
                     line += element.getText() + " ";
                 }
+                Log.d(TAG,"Line "+j+":\n"+line);
                 for (int k = 0; k<recognizedProduces.size(); k++){
                     String name = recognizedProduces.get(k).getName();
                     if (line.contains(name)) {
                         valid = true;
                         produce.setName(name);
-                    }                }
+                    }
+                }
             }
         }
         return valid;
