@@ -12,7 +12,6 @@ import androidx.camera.core.ImageAnalysis;
 import androidx.camera.core.Preview;
 import androidx.camera.lifecycle.ProcessCameraProvider;
 import androidx.camera.view.PreviewView;
-import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -21,14 +20,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.stockscan.Analyzers.ImageProcessor;
 import com.example.stockscan.Analyzers.TextProcessor;
 import com.example.stockscan.R;
+import com.example.stockscan.Models.ScanPopup;
 import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.text.TextRecognizer;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -44,7 +41,7 @@ import java.util.concurrent.ExecutionException;
  * create an instance of this fragment.
  */
 public class ScanFrag extends Fragment {
-    private static final String TAG = "MainActivity";
+    private static final String TAG = "ScanFrag";
     private static final int PERMISSION_REQUESTS = 1;
     private static final String[] PERMISSIONS = new String[]{
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
@@ -55,6 +52,10 @@ public class ScanFrag extends Fragment {
     private Context context;
 
     private PreviewView previewView;
+    private ScanPopup popup;
+//    CardView popup;
+//    Button cancel;
+//    TextView prodName, prodCode, prodBatch, prodWeight, prodExp;
 
     @Nullable private ProcessCameraProvider cameraProvider;
     @Nullable private ImageAnalysis analysisUseCase;
@@ -85,14 +86,15 @@ public class ScanFrag extends Fragment {
 
         previewView = view.findViewById(R.id.camera);
         ImageView scanProd = view.findViewById(R.id.scanProd);
-        CardView popup = view.findViewById(R.id.popup);
-        Button saveProd = view.findViewById(R.id.saveProd);
-        Button cancel = view.findViewById(R.id.cancelScan);
-        TextView prodName = view.findViewById(R.id.prodName);
-        TextView prodCode = view.findViewById(R.id.prodCode);
-        TextView prodBatch = view.findViewById(R.id.prodBatch);
-        TextView prodWeight = view.findViewById(R.id.prodWeight);
-        TextView prodExp = view.findViewById(R.id.prodExpiry);
+
+        popup = new ScanPopup(view.findViewById(R.id.popup),
+                              view.findViewById(R.id.cancelScan),
+                              view.findViewById(R.id.saveProd),
+                              view.findViewById(R.id.prodName),
+                              view.findViewById(R.id.prodCode),
+                              view.findViewById(R.id.prodBatch),
+                              view.findViewById(R.id.prodWeight),
+                              view.findViewById(R.id.prodExpiry));
 
         if (!allPermissionsGranted())
             getRuntimePermissions();
@@ -112,17 +114,8 @@ public class ScanFrag extends Fragment {
 
         startCamera();
 
-        popup.setOnClickListener(l-> popup.setVisibility(View.GONE));
-        saveProd.setOnClickListener(l ->{
-//          saveScannedProduct();
-            popup.setVisibility(View.GONE);
-        });
-
         scanProd.setOnClickListener(l ->{
             processor.requestAnalysis();
-            if(popup.getVisibility() == View.VISIBLE)
-                Toast.makeText(context, "Popup already visible", Toast.LENGTH_SHORT).show();
-            popup.setVisibility(View.VISIBLE);
         });
     }
 
@@ -152,7 +145,9 @@ public class ScanFrag extends Fragment {
         processor = new TextProcessor(context);
 
         analysisUseCase = new ImageAnalysis.Builder().build();
-        analysisUseCase.setAnalyzer(ContextCompat.getMainExecutor(context), image -> processor.processImageProxy(image));
+        analysisUseCase.setAnalyzer(ContextCompat.getMainExecutor(context), image -> {
+            processor.processImageProxy(image, popup);
+        });
 
         cameraProvider.bindToLifecycle(this, cameraSelector, analysisUseCase);
     }
