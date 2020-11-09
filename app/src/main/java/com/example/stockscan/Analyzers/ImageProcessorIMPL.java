@@ -6,6 +6,7 @@ import android.os.Build;
 import android.os.SystemClock;
 import android.util.Log;
 
+import com.example.stockscan.Models.ScanPopup;
 import com.example.stockscan.Utils.ScopedExecutor;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskExecutors;
@@ -32,7 +33,7 @@ public abstract class ImageProcessorIMPL<T> implements ImageProcessor {
     @Override
     @RequiresApi(Build.VERSION_CODES.KITKAT)
     @ExperimentalGetImage
-    public void processImageProxy(ImageProxy proxy) {
+    public void processImageProxy(ImageProxy proxy, ScanPopup popup) {
         if(isShutdown || !analysisRequested){
             proxy.close();
             return;
@@ -40,18 +41,22 @@ public abstract class ImageProcessorIMPL<T> implements ImageProcessor {
 
 //        Bitmap bitmap = BitmapUtils.getBitmap(proxy);
 
+
+
         requestDetectInImage(
                 InputImage.fromMediaImage(proxy.getImage(),
-                        proxy.getImageInfo().getRotationDegrees()))
+                        proxy.getImageInfo().getRotationDegrees()),
+                popup)
                 .addOnCompleteListener(result ->{
                     proxy.close();
                     analysisRequested = false;
                 });
     }
 
-    private Task<T> requestDetectInImage(final InputImage image){
+    private Task<T> requestDetectInImage(final InputImage image, ScanPopup popup){
         final long startMS = SystemClock.elapsedRealtime();
-        return detectInImage(image).addOnFailureListener(executor, e -> {
+
+        return detectInImage(image, popup).addOnFailureListener(executor, e -> {
             String error = "Failed to process. Error: " + e.getLocalizedMessage();
             Log.d(TAG, error);
         });
@@ -72,7 +77,7 @@ public abstract class ImageProcessorIMPL<T> implements ImageProcessor {
         analysisRequested = true;
     }
 
-    protected abstract Task<T> detectInImage(InputImage image);
+    protected abstract Task<T> detectInImage(InputImage image, ScanPopup popup);
     protected abstract void onSuccess(@NonNull T results);
     protected abstract void onFailure(@NonNull Exception e);
 

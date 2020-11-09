@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.example.stockscan.Adapters.ScannedProductAdapter;
 import com.example.stockscan.Models.Produce;
+import com.example.stockscan.Models.ScanPopup;
 import com.google.android.gms.tasks.Task;
 import com.google.mlkit.vision.common.InputImage;
 import com.google.mlkit.vision.text.Text;
@@ -29,12 +30,17 @@ public class TextProcessor extends ImageProcessorIMPL<Text> {
     }
 
     @Override
-    protected Task detectInImage(InputImage image) {
+    protected Task detectInImage(InputImage image, ScanPopup popup) {
         return textRecognizer.process(image).addOnSuccessListener(text -> {
             Log.d(TAG, "Analysis succeeded");
+
             ScannedProductAdapter adapter = new ScannedProductAdapter();
-            adapter.getProduceFromText(text);
-            produce = adapter.getProduce();
+            adapter.getProduceFromText(text).addOnCompleteListener(l->{
+                produce = adapter.getProduce();
+                popup.addProduce(produce);
+            });
+
+
         }).addOnFailureListener(e -> {
             Log.d(TAG, "Analysis failed");
             e.printStackTrace();
