@@ -50,36 +50,36 @@ public abstract class ImageProcessorIMPL<T> implements ImageProcessor {
             return;
         }
 
-        Image image = proxy.getImage();
-        ByteBuffer buffer = image.getPlanes()[0].getBuffer();
-        byte[] imgBytes = new byte[buffer.capacity()];
-        buffer.get(imgBytes);
-
-        String encodedString = Base64.getEncoder().encodeToString(imgBytes);
-
-        RequestParams params = new RequestParams();
-        params.add("image_data", encodedString);
-
-        RestClient.post("https://us-central1-stockscan-2d0f2.cloudfunctions.net/parse-image",
-                        params, new JsonHttpResponseHandler(){
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                super.onSuccess(statusCode, headers, response);
-                try {
-                    if(!response.getBoolean("error")){
-                        Log.d(TAG, response.getString("image_text"));
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                super.onFailure(statusCode, headers, responseString, throwable);
-                Log.e(TAG, "error: "+responseString);
-            }
-        });
+//        Image image = proxy.getImage();
+//        ByteBuffer buffer = image.getPlanes()[0].getBuffer();
+//        byte[] imgBytes = new byte[buffer.capacity()];
+//        buffer.get(imgBytes);
+//
+//        String encodedString = Base64.getEncoder().encodeToString(imgBytes);
+//
+//        RequestParams params = new RequestParams();
+//        params.add("image_data", encodedString);
+//
+//        RestClient.post("https://us-central1-stockscan-2d0f2.cloudfunctions.net/parse-image",
+//                        params, new JsonHttpResponseHandler(){
+//            @Override
+//            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+//                super.onSuccess(statusCode, headers, response);
+//                try {
+//                    if(!response.getBoolean("error")){
+//                        Log.d(TAG, response.getString("image_text"));
+//                    }
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+//                super.onFailure(statusCode, headers, responseString, throwable);
+//                Log.e(TAG, "error: "+responseString);
+//            }
+//        });
 
 //        Bitmap bitmap = BitmapUtils.getBitmap(proxy);
 
