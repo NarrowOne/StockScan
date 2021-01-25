@@ -31,9 +31,11 @@ public class TextProcessor extends ImageProcessorIMPL<Text> {
 
     @Override
     protected Task detectInImage(InputImage image, ScanPopup popup) {
+
         return textRecognizer.process(image).addOnSuccessListener(text -> {
             Log.d(TAG, "Analysis succeeded");
 
+            logExtrasForTesting(text);
             ScannedProductAdapter adapter = new ScannedProductAdapter();
             adapter.getProduceFromText(text).addOnCompleteListener(l->{
                 produce = adapter.getProduce();
@@ -72,39 +74,19 @@ public class TextProcessor extends ImageProcessorIMPL<Text> {
             Log.v(MANUAL_TESTING_LOG, "Detected text has : " + text.getTextBlocks().size() + " blocks");
             for (int i = 0; i < text.getTextBlocks().size(); ++i) {
                 List<Text.Line> lines = text.getTextBlocks().get(i).getLines();
-                Log.v(
-                        MANUAL_TESTING_LOG,
-                        String.format("Detected text block %d has %d lines", i, lines.size()));
+//                Log.v(
+//                        MANUAL_TESTING_LOG,
+//                        String.format("Detected text block %d has %d lines", i, lines.size()));
                 for (int j = 0; j < lines.size(); ++j) {
                     String line = "";
                     List<Text.Element> elements = lines.get(j).getElements();
-                    Log.v(
-                            MANUAL_TESTING_LOG,
-                            String.format("Detected text line %d has %d elements", j, elements.size()));
+//                    Log.v(
+//                            MANUAL_TESTING_LOG,
+//                            String.format("Detected text line %d has %d elements", j, elements.size()));
 
                     for (int k = 0; k < elements.size(); ++k) {
                         Text.Element element = elements.get(k);
                         line += element.getText() + " ";
-//                        Log.v(
-//                                MANUAL_TESTING_LOG,
-//                                String.format("Detected text element %d says: %s", k, element.getText()));
-//                        Log.v(
-//                                MANUAL_TESTING_LOG,
-//                                String.format(
-//                                        "Detected text element %d has a bounding box: %s",
-//                                        k, element.getBoundingBox().flattenToString()));
-//                        Log.v(
-//                                MANUAL_TESTING_LOG,
-//                                String.format(
-//                                        "Expected corner point size is 4, get %d", element.getCornerPoints().length));
-//                        for (Point point : element.getCornerPoints()) {
-//                            Log.v(
-//                                    MANUAL_TESTING_LOG,
-//                                    String.format(
-//                                            "Corner point for element %d is located at: x - %d, y = %d",
-//                                            k, point.x, point.y));
-//                        }
-
                     }
                     Log.d(MANUAL_TESTING_LOG, line);
                 }

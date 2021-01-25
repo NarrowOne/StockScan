@@ -26,7 +26,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="16dp"
-        android:text="@string/produce_count"
+        android:text="1"
         android:textColor="@color/black"
         android:textSize="@dimen/text_h3"
         app:layout_constraintBottom_toBottomOf="parent"

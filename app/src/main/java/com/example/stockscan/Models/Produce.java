@@ -1,7 +1,12 @@
 package com.example.stockscan.Models;
 
 
+import android.util.Log;
+
 import com.google.mlkit.vision.text.Text;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Produce {
     private String iD;
@@ -81,15 +86,29 @@ public class Produce {
 
     public static class Builder{
         private Text text;
+        private final Produce produce;
 
         public Builder(Text text){
             this.text = text;
+            produce = new Produce();
         }
 
         public Produce build(){
+            List<String> textBlock = new ArrayList<>();
+            for (int i = 0; i < text.getTextBlocks().size(); ++i) {
+                List<Text.Line> lines = text.getTextBlocks().get(i).getLines();
+                for (int j = 0; j < lines.size(); ++j) {
+                    List<Text.Element> elements = lines.get(j).getElements();
+                    String line = "";
+                    for (int k = 0; k < elements.size(); ++k) {
+                        Text.Element element = elements.get(k);
+                        line += element.getText() + " ";
+                    }
+                    textBlock.add(line);
+                }
+            }
 
-
-            return new Produce();
+            return produce;
         }
     }
 }
