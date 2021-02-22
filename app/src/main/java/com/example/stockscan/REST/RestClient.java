@@ -4,13 +4,15 @@ import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
-import java.util.HashMap;
-
 public class RestClient {
+    private static final String TAG = "RestClient - ";
+    private static AsyncHttpClient client = new AsyncHttpClient();
+
     public static void get(String url, RequestParams params, AsyncHttpResponseHandler responseHandler){
-        new AsyncHttpClient().get(url, params, responseHandler);
+        client.get(url, params, responseHandler);
     }
     public static void post(String url, RequestParams params, AsyncHttpResponseHandler responseHandler){
-        new AsyncHttpClient().get(url, params, responseHandler);
+        client.post(url, params, responseHandler);
     }
+
 }
