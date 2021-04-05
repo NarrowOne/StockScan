@@ -6,10 +6,14 @@ import android.graphics.ImageFormat;
 import android.graphics.Rect;
 import android.graphics.YuvImage;
 import android.media.Image;
-import android.nfc.Tag;
 import android.os.Build;
 import android.os.SystemClock;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.camera.core.ExperimentalGetImage;
+import androidx.camera.core.ImageProxy;
 
 import com.example.stockscan.Models.ScanPopup;
 import com.example.stockscan.REST.OCRRest;
@@ -18,25 +22,11 @@ import com.example.stockscan.Utils.ScopedExecutor;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskExecutors;
 import com.google.mlkit.vision.common.InputImage;
-import com.loopj.android.http.JsonHttpResponseHandler;
-import com.loopj.android.http.RequestParams;
-import com.loopj.android.http.TextHttpResponseHandler;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.HashMap;
-import java.util.Iterator;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
-import androidx.camera.core.ExperimentalGetImage;
-import androidx.camera.core.ImageProxy;
-import cz.msebera.android.httpclient.Header;
 
 public abstract class ImageProcessorIMPL<T> implements ImageProcessor {
     private boolean isShutdown;
@@ -61,46 +51,22 @@ public abstract class ImageProcessorIMPL<T> implements ImageProcessor {
         }
 
         Image image = proxy.getImage();
-        byte[] imgBytes = null;
+        assert image != null;
 
+        byte[] imgBytes = null;
         imgBytes = NV21toJPEG(
                 YUV_420_888toNV21(image),
                 image.getWidth(), image.getHeight());
 
-//        ByteBuffer buffer = image.getPlanes()[0].getBuffer();
-//        byte[] imgBytes = new byte[buffer.capacity()];
-//        buffer.get(imgBytes);
-
-
-
         String encodedString = Base64.getEncoder().encodeToString(imgBytes);
 
-//        loopJHTTPCall(encodedString);
-
-        OCRRest ocrRest = new OCRRest(popup);
+        RestClient ocrRest = new OCRRest(popup, "POST");
         HashMap<String, Object> data = new HashMap<>();
+        data.put("request_type", "ocr");
         data.put("image_data", encodedString);
         ocrRest.execute(data);
 
-//        String json = "{\"image_data\" : \""+encodedString+"\"}";
-//
-//        RestClient.post("https://us-central1-stockscan-2d0f2.cloudfunctions.net/parse-image",
-//                                 json);
-
         analysisRequested = false;
-
-//        Bitmap bitmap = BitmapUtils.getBitmap(proxy);
-
-
-
-//        requestDetectInImage(
-//                InputImage.fromMediaImage(proxy.getImage(),
-//                        proxy.getImageInfo().getRotationDegrees()),
-//                popup)
-//                .addOnCompleteListener(result ->{
-//                    proxy.close();
-//                    analysisRequested = false;
-//                });
     }
 
     private static byte[] YUV_420_888toNV21(Image image) {
@@ -131,48 +97,7 @@ public abstract class ImageProcessorIMPL<T> implements ImageProcessor {
         return out.toByteArray();
     }
 
-    private void loopJHTTPCall(String encodedString) {
 
-        RequestParams params = new RequestParams();
-        params.add("image_data", encodedString);
-        params.put("image_data", encodedString);
-
-        RestClient.post("https://us-central1-stockscan-2d0f2.cloudfunctions.net/parse-image",
-                        params, new JsonHttpResponseHandler(){
-            private final String TAG = "JsonHttpResponseHandler";
-
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                super.onSuccess(statusCode, headers, response);
-                try {
-                    if(!response.has("error")){
-                        for (Iterator<String> it = response.keys(); it.hasNext(); ) {
-                            String key = it.next();
-                            Log.d(TAG, "{\""+key+"\" : \""+response.get(key)+"\"}");
-                        }
-                    }else{
-                        Log.e(TAG, response.getString("error"));
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                super.onFailure(statusCode, headers, responseString, throwable);
-                Log.e(TAG, "error: "+responseString);
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                super.onFailure(statusCode, headers, throwable, errorResponse);
-                if(errorResponse!= null)
-                    Log.e(TAG, "error: "+errorResponse.toString());
-            }
-        });
-    }
 
     private Task<T> requestDetectInImage(final InputImage image, ScanPopup popup){
         final long startMS = SystemClock.elapsedRealtime();

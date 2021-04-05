@@ -37,10 +37,6 @@ public class ProduceDetails extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        if (getArguments() != null) {
-//            mParam1 = getArguments().getString(ARG_PARAM1);
-//            mParam2 = getArguments().getString(ARG_PARAM2);
-//        }
 
     }
 
@@ -68,10 +64,10 @@ public class ProduceDetails extends Fragment {
         String weight = String.format("%.0f%s", produce.getWeight(),"g");
 
         prodName.setText(produce.getName());
-        prodCode.setText(produce.getProdCode());
+        prodCode.setText(produce.getProduct_code());
         prodBatch.setText(produce.getBatch());
         prodWeight.setText(weight);
-        prodExp.setText(produce.getExpiryDate());
+        prodExp.setText(produce.getExpiry());
 
     }
 
