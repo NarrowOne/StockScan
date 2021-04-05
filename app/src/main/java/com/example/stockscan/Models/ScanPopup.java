@@ -1,143 +1,128 @@
 package com.example.stockscan.Models;
 
-import android.util.Log;
+import android.app.Dialog;
+import android.content.Context;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.google.firebase.firestore.FirebaseFirestore;
-
-import java.util.HashMap;
-import java.util.Map;
+import com.example.stockscan.R;
+import com.example.stockscan.REST.OCRRest;
+import com.example.stockscan.REST.RestClient;
+import com.google.gson.Gson;
 
 import androidx.cardview.widget.CardView;
 
+import java.util.HashMap;
+
 public class ScanPopup {
     private static final String TAG = "ScanPopup";
+    private final Context context;
+    private Produce produce;
 
-    private CardView popup;
-    private Button cancel, saveProd;
+    private CardView popupContent, popupError, popupButtons;
     private TextView prodName, prodCode, prodBatch, prodWeight, prodExp;
+    private ProgressBar progressBar;
+    private Dialog dialog;
 
-    public ScanPopup(CardView popup, Button cancel,
-                     Button saveProd, TextView prodName,
-                     TextView prodCode, TextView prodBatch,
-                     TextView prodWeight, TextView prodExp) {
-        this.popup = popup;
-        this.cancel = cancel;
-        this.saveProd = saveProd;
-        this.prodName = prodName;
-        this.prodCode = prodCode;
-        this.prodBatch = prodBatch;
-        this.prodWeight = prodWeight;
-        this.prodExp = prodExp;
+    private Button cancel, saveProd;
 
-        popup.setOnClickListener(l-> popup.setVisibility(View.GONE));
+    public ScanPopup(Context context) {
+        this.context = context;
+
+        setDialog();
+        setViews();
+        setLoading();
+    }
+
+    private void setDialog() {
+        dialog = new Dialog(context);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.popup_layout);
+    }
+
+    private void setViews() {
+        popupContent = dialog.findViewById(R.id.popupContent);
+        popupError = dialog.findViewById(R.id.popupError);
+        popupButtons = dialog.findViewById(R.id.popupButtons);
+
+        prodName = dialog.findViewById(R.id.prodName);
+        prodCode = dialog.findViewById(R.id.prodCode);
+        prodBatch = dialog.findViewById(R.id.prodBatch);
+        prodWeight = dialog.findViewById(R.id.prodWeight);
+        prodExp = dialog.findViewById(R.id.prodExpiry);
+        cancel = dialog.findViewById(R.id.retryScan);
+        saveProd = dialog.findViewById(R.id.saveProd);
+        progressBar = dialog.findViewById(R.id.progressBar);
+
+        cancel.setOnClickListener(l-> dismiss());
         saveProd.setOnClickListener(l ->{
-//          saveScannedProduct();
-            popup.setVisibility(View.GONE);
+          saveScannedProduct();
         });
     }
 
-    public void addProduce(Produce produce){
-        popup.setVisibility(View.VISIBLE);
+    private void setLoading() {
+        prodName.setText("Loading...");
+        popupContent.setVisibility(View.INVISIBLE);
+        popupButtons.setVisibility(View.GONE);
+        popupError.setVisibility(View.GONE);
 
+        progressBar.setVisibility(View.VISIBLE);
+    }
+
+
+    public void addProduce(Produce produce){
         if(produce == null) return;
 
+        this.produce = produce;
+
         prodName.setText(produce.getName());
-        prodCode.setText(produce.getProdCode());
+        prodCode.setText(produce.getProduct_code());
         prodBatch.setText(produce.getBatch());
         prodWeight.setText(String.format("%.0f", produce.getWeight()));
-        prodExp.setText(produce.getExpiryDate());
+        prodExp.setText(produce.getExpiry());
+
+        progressBar.setVisibility(View.GONE);
+        popupContent.setVisibility(View.VISIBLE);
     }
 
-        private void saveScannedProduct(){
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private void saveScannedProduct(){
+        RestClient rest = new OCRRest(this, "POST");
+        HashMap<String, Object> data = new HashMap<>();
+        data.put("request_type", "save");
+        data.put("produce_details", new Gson().toJson(produce));
 
-        double weight = Double.parseDouble(prodWeight.getText().toString()) *1000;
-
-        Map<String, Object> scannedDetails = new HashMap<>();
-        scannedDetails.put("Name", prodName.getText().toString());
-        scannedDetails.put("Product Code", prodCode.getText().toString());
-        scannedDetails.put("Weight", String.format("%.0f", weight));
-        scannedDetails.put("Batch", prodBatch.getText().toString());
-        scannedDetails.put("Expiry", prodExp.getText().toString());
-//        scannedDetails.put("Tags", "Meat, Pork");
-
-        db.collection("Users")
-                .document("Test")
-                .collection("Stock")
-                .add(scannedDetails)
-                .addOnCompleteListener(task -> {
-                    if(task.isSuccessful()){
-//                        Toast.makeText(context, "Product Recorded", Toast.LENGTH_SHORT).show();
-                    }else{
-                        Log.e(TAG, "Error recording product", task.getException());
-                    }
-                });
+        rest.execute(data);
     }
 
-    public CardView getPopup() {
-        return popup;
+    public void show(){
+        dialog.show();
     }
 
-    public void setPopup(CardView popup) {
-        this.popup = popup;
+    public void dismiss(){
+        clearFields();
+        dialog.dismiss();
     }
 
-    public Button getCancel() {
-        return cancel;
+    private void clearFields() {
+        prodName.setText(R.string.produce_name_placeholder);
+        prodCode.setText(R.string.product_code);
+        prodBatch.setText(R.string.product_batch);
+        prodWeight.setText(R.string.product_weight);
+        prodExp.setText(R.string.product_expiry_date);
     }
 
-    public void setCancel(Button cancel) {
-        this.cancel = cancel;
+    public void saved() {
+        Toast.makeText(context, "Produce saved!", Toast.LENGTH_LONG).show();
     }
 
-    public Button getSaveProd() {
-        return saveProd;
-    }
-
-    public void setSaveProd(Button saveProd) {
-        this.saveProd = saveProd;
-    }
-
-    public TextView getProdName() {
-        return prodName;
-    }
-
-    public void setProdName(TextView prodName) {
-        this.prodName = prodName;
-    }
-
-    public TextView getProdCode() {
-        return prodCode;
-    }
-
-    public void setProdCode(TextView prodCode) {
-        this.prodCode = prodCode;
-    }
-
-    public TextView getProdBatch() {
-        return prodBatch;
-    }
-
-    public void setProdBatch(TextView prodBatch) {
-        this.prodBatch = prodBatch;
-    }
-
-    public TextView getProdWeight() {
-        return prodWeight;
-    }
-
-    public void setProdWeight(TextView prodWeight) {
-        this.prodWeight = prodWeight;
-    }
-
-    public TextView getProdExp() {
-        return prodExp;
-    }
-
-    public void setProdExp(TextView prodExp) {
-        this.prodExp = prodExp;
+    public void showError() {
+        popupContent.setVisibility(View.INVISIBLE);
+        popupError.setVisibility(View.VISIBLE);
+        popupButtons.setVisibility(View.VISIBLE);
+        saveProd.setVisibility(View.GONE);
     }
 }
