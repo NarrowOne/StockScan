@@ -23,7 +23,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.example.stockscan.Analyzers.ImageProcessor;
-import com.example.stockscan.Analyzers.TextProcessor;
+import com.example.stockscan.Analyzers.ImageProcessorIMPL;
 import com.example.stockscan.R;
 import com.example.stockscan.Models.ScanPopup;
 import com.google.android.gms.vision.CameraSource;
@@ -53,9 +53,6 @@ public class ScanFrag extends Fragment {
 
     private PreviewView previewView;
     private ScanPopup popup;
-//    CardView popup;
-//    Button cancel;
-//    TextView prodName, prodCode, prodBatch, prodWeight, prodExp;
 
     @Nullable private ProcessCameraProvider cameraProvider;
     @Nullable private ImageAnalysis analysisUseCase;
@@ -87,14 +84,7 @@ public class ScanFrag extends Fragment {
         previewView = view.findViewById(R.id.camera);
         ImageView scanProd = view.findViewById(R.id.scanProd);
 
-        popup = new ScanPopup(view.findViewById(R.id.popup),
-                              view.findViewById(R.id.cancelScan),
-                              view.findViewById(R.id.saveProd),
-                              view.findViewById(R.id.prodName),
-                              view.findViewById(R.id.prodCode),
-                              view.findViewById(R.id.prodBatch),
-                              view.findViewById(R.id.prodWeight),
-                              view.findViewById(R.id.prodExpiry));
+        popup = new ScanPopup(context);
 
         if (!allPermissionsGranted())
             getRuntimePermissions();
@@ -115,6 +105,7 @@ public class ScanFrag extends Fragment {
         startCamera();
 
         scanProd.setOnClickListener(l ->{
+//            popup.show();
             processor.requestAnalysis();
         });
     }
@@ -142,7 +133,7 @@ public class ScanFrag extends Fragment {
         if (analysisUseCase != null) cameraProvider.unbind(analysisUseCase);
         if (processor != null) processor.stop();
 
-        processor = new TextProcessor(context);
+        processor = new ImageProcessorIMPL();
 
         analysisUseCase = new ImageAnalysis.Builder().build();
         analysisUseCase.setAnalyzer(ContextCompat.getMainExecutor(context), image -> {
@@ -201,32 +192,6 @@ public class ScanFrag extends Fragment {
             }
         }
     }
-
-//    private void saveScannedProduct(){
-//        FirebaseFirestore db = FirebaseFirestore.getInstance();
-//
-//        double weight = Double.parseDouble(weightDisplay.getText().toString()) *1000;
-//
-//        Map<String, Object> scannedDetails = new HashMap<>();
-//        scannedDetails.put("Name", nameDisplay.getText().toString());
-//        scannedDetails.put("Product Code", idDisplay.getText().toString());
-//        scannedDetails.put("Weight", String.format("%.0f", weight));
-//        scannedDetails.put("Batch", batchDisplay.getText().toString());
-//        scannedDetails.put("Expiry", expDisplay.getText().toString());
-//        scannedDetails.put("Tags", "Meat, Pork");
-//
-//        db.collection("Users")
-//                .document("Test")
-//                .collection("Stock")
-//                .add(scannedDetails)
-//                .addOnCompleteListener(task -> {
-//                    if(task.isSuccessful()){
-//                        Toast.makeText(context, "Product Recorded", Toast.LENGTH_SHORT).show();
-//                    }else{
-//                        Log.e(TAG, "Error recording product", task.getException());
-//                    }
-//                });
-//    }
 
     @Override
     public void onAttach(@NonNull Context context) {
