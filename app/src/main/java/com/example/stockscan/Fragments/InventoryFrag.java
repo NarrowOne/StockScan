@@ -19,10 +19,13 @@ import com.example.stockscan.Adapters.InventoryAdapter;
 import com.example.stockscan.MasterActivity;
 import com.example.stockscan.Models.Produce;
 import com.example.stockscan.R;
+import com.example.stockscan.REST.InventoryRest;
+import com.example.stockscan.REST.RestClient;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class InventoryFrag extends Fragment {
@@ -73,39 +76,16 @@ public class InventoryFrag extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        invAdapter = new InventoryAdapter(parent);
+
         getStocklist();
     }
 
     private void getStocklist() {
-        List<Produce> stockList = new ArrayList<>();
-
-        db.collection("Users")
-                .document("Test")
-                .collection("Stock")
-                .get()
-                .addOnCompleteListener(task -> {
-                    if(task.isSuccessful()){
-                        for(QueryDocumentSnapshot document : task.getResult()){
-                            Log.d(TAG, document.getId() + "=>" + document.getData());
-
-                            String id = document.getId();
-                            String prodName = document.get("Name").toString();
-                            String prodID = document.get("Product Code").toString();
-                            String batch = document.get("Batch").toString();
-                            int weight = Integer.parseInt(document.get("Weight").toString());
-                            String expiryDate = document.get("Expiry").toString();
-                            String[] tags = document.get("Tags").toString().split(",");
-
-                            Produce produce = new Produce(id, prodName, prodID, batch,
-                                    weight, expiryDate, tags);
-
-                            stockList.add(produce);
-                        }
-
-                        invAdapter.setStockList(stockList);
-                        invRecycler.setAdapter(invAdapter);
-                    }
-                });
+        RestClient client = new InventoryRest("POST", invRecycler, invAdapter);
+        HashMap<String, Object> data = new HashMap<>();
+        data.put("request_type", "get_all");
+        client.execute(data);
 
     }
 
