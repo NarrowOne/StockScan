@@ -8,7 +8,7 @@
     <string name="product_weight">Weight (g):</string>
     <string name="product_expiry_date">Expiry Date:</string>
     <string name="produce_count">Count:</string>
-    <string name="cancel_btn">Cancel</string>
+    <string name="retry_btn">Retry</string>
     <string name="save">Save</string>
     <string name="scanProd_description">Capture product scan</string>
 </resources>
