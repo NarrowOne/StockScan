@@ -1,34 +1,43 @@
 package com.example.stockscan.Models;
 
 
-import android.util.Log;
-
 import com.google.mlkit.vision.text.Text;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 
 public class Produce {
     private String iD;
     private String name;
-    private String prodCode;
+    private String product_code;
+    private String producer;
     private String batch;
     private double weight;
-    private String expiryDate;
+    private String expiry;
     private String[] tags;
 
     public Produce(){
 
     }
 
-    public Produce(String iD, String name, String prodCode, String batch,
-                   double weight, String expiryDate, String[] tags) {
-        this.iD = iD;
+    public Produce(String name, String product_code, String producer, String batch,
+                   double weight, String expiry) {
         this.name = name;
-        this.prodCode = prodCode;
+        this.product_code = product_code;
+        this.producer = producer;
         this.batch = batch;
         this.weight = weight;
-        this.expiryDate = expiryDate;
+        this.expiry = expiry;
+    }
+
+    public Produce(String iD, String name, String product_code, String producer, String batch,
+                   double weight, String expiry, String[] tags) {
+        this.iD = iD;
+        this.name = name;
+        this.product_code = product_code;
+        this.producer = producer;
+        this.batch = batch;
+        this.weight = weight;
+        this.expiry = expiry;
         this.tags = tags;
     }
 
@@ -48,12 +57,20 @@ public class Produce {
         this.name = name;
     }
 
-    public String getProdCode() {
-        return prodCode;
+    public String getProduct_code() {
+        return product_code;
     }
 
-    public void setProdCode(String prodCode) {
-        this.prodCode = prodCode;
+    public void setProduct_code(String product_code) {
+        this.product_code = product_code;
+    }
+
+    public String getProducer() {
+        return producer;
+    }
+
+    public void setProducer(String producer) {
+        this.producer = producer;
     }
 
     public String getBatch() {
@@ -72,43 +89,27 @@ public class Produce {
         this.weight = weight;
     }
 
-    public String getExpiryDate() {
-        return expiryDate;
+    public String getExpiry() {
+        return expiry;
     }
 
-    public void setExpiryDate(String expiryDate) {
-        this.expiryDate = expiryDate;
+    public void setExpiry(String expiry) {
+        this.expiry = expiry;
     }
 
     public String[] getTags() {
         return tags;
     }
 
-    public static class Builder{
-        private Text text;
-        private final Produce produce;
-
-        public Builder(Text text){
-            this.text = text;
-            produce = new Produce();
-        }
-
-        public Produce build(){
-            List<String> textBlock = new ArrayList<>();
-            for (int i = 0; i < text.getTextBlocks().size(); ++i) {
-                List<Text.Line> lines = text.getTextBlocks().get(i).getLines();
-                for (int j = 0; j < lines.size(); ++j) {
-                    List<Text.Element> elements = lines.get(j).getElements();
-                    String line = "";
-                    for (int k = 0; k < elements.size(); ++k) {
-                        Text.Element element = elements.get(k);
-                        line += element.getText() + " ";
-                    }
-                    textBlock.add(line);
-                }
-            }
-
-            return produce;
-        }
+    @Override
+    public String toString() {
+        return "Produce{" +
+                "name='" + name + '\'' +
+                ", product_code='" + product_code + '\'' +
+                ", producer='" + producer + '\'' +
+                ", batch='" + batch + '\'' +
+                ", weight=" + weight +
+                ", expiry='" + expiry + '\'' +
+                '}';
     }
 }
